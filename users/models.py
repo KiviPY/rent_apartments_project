@@ -22,7 +22,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     birth_date = models.DateField(validators=[validate_birth_date], blank=True, null=True)
     phone_number = PhoneNumberField(default='', unique=True)  # международный телефон
-    gender = models.CharField(max_length=5, choices=GENDER_CHOICES, null=True, blank=True)
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, null=True, blank=True)
     nationality = CountryField(blank_label='Choose country', null=True, blank=True)
 
     USERNAME_FIELD = 'email'
