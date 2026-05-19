@@ -10,6 +10,8 @@ from users.models import User
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from users.serializers import UserSerializer
+
 """============JWT============="""
 class LoginAPI(APIView):
     permission_classes = [permissions.AllowAny]
@@ -62,18 +64,13 @@ class Verify2FAAPIView(APIView):
 
         # Чистим кеш
         cache.delete(f"2fa:{user_id}")
-        # cache.delete(f"2fa_pending:{user_id}")
 
         # Генерируем JWT токены
         refresh = RefreshToken.for_user(user)
         return Response({
             "access": str(refresh.access_token),
             "refresh": str(refresh),
-            "user": {
-                "id": user.id,
-                "username": user.username,
-                "email": user.email,
-            }
+            "user": UserSerializer(user).data
         })
 
 
