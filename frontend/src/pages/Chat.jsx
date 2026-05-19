@@ -24,7 +24,7 @@ export default function Chat() {
 
   useEffect(() => {
     const accessToken = window.__accessToken__
-    const ws = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${roomId}/?token=${accessToken ?? ""}`)
+    const ws = new WebSocket(`ws://13.50.199.197/ws/chat/${roomId}/?token=${accessToken ?? ""}`)
     wsRef.current = ws
     ws.onmessage = (e) => {
       const msg = JSON.parse(e.data)

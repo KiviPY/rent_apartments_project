@@ -155,7 +155,7 @@ export default function EditApartment() {
             const headers = {}
             if (window.__accessToken__) headers["Authorization"] = `Bearer ${window.__accessToken__}`
 
-            const res = await fetch(`http://127.0.0.1:8000/my_apartments/${id}/`, {
+            const res = await fetch(`http://13.50.199.197/my_apartments/${id}/`, {
                 method: "PATCH", body: fd, headers
             })
             const data = await res.json()
