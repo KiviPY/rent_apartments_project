@@ -24,8 +24,8 @@ export default function Profile() {
 
   const [tab, setTab]               = useState("info")
   const [apartments, setApartments] = useState([])
-  const [bookings, setBookings]     = useState([])   // аренды жильца
-  const [requests, setRequests]     = useState([])   // запросы на квартиры владельца
+  const [bookings, setBookings]     = useState([])
+  const [requests, setRequests]     = useState([])
   const [chats, setChats]           = useState([])
   const [loading, setLoading]       = useState(false)
   const [editing, setEditing]       = useState(false)
@@ -33,6 +33,14 @@ export default function Profile() {
   const [saveLoading, setSaveLoading] = useState(false)
   const [saveError, setSaveError]   = useState(null)
   const [saveOk, setSaveOk]         = useState(false)
+
+  // Загружаем свежие данные пользователя при открытии профиля
+  useEffect(() => {
+    if (!account) return
+    api.me()
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data) setAccount(data) })
+  }, [])
 
   useEffect(() => {
     if (!account) { navigate("/login"); return }
@@ -53,13 +61,11 @@ export default function Profile() {
         .then(d => setApartments(d.results ?? d)).finally(() => setLoading(false))
     }
     if (tab === "bookings") {
-      // GET /bookings/ — список аренд текущего жильца
       setLoading(true)
       api.myBookings().then(r => r.ok ? r.json() : [])
         .then(d => setBookings(d.results ?? d)).finally(() => setLoading(false))
     }
     if (tab === "requests") {
-      // GET /owner/bookings/ — список запросов на квартиры владельца
       setLoading(true)
       api.ownerRentings().then(r => r.ok ? r.json() : [])
         .then(d => setRequests(d.results ?? d)).finally(() => setLoading(false))
@@ -91,8 +97,6 @@ export default function Profile() {
     setApartments(prev => prev.filter(a => a.id !== id))
   }
 
-  // Владелец меняет статус запроса
-  // PATCH /owner/bookings/:id/ с { status: "rented" или "cancelled" }
   const handleUpdateStatus = async (rentingId, status) => {
     await api.updateRentingStatus(rentingId, status)
     setRequests(prev => prev.map(r =>
@@ -112,7 +116,6 @@ export default function Profile() {
       <Header />
       <div className="container" style={{ maxWidth: 860 }}>
 
-        {/* Шапка */}
         <div style={{
           background: "var(--bg2)", borderRadius: 20, padding: "28px 32px",
           display: "flex", alignItems: "center", gap: 20,
@@ -139,7 +142,6 @@ export default function Profile() {
           </button>
         </div>
 
-        {/* Табы */}
         <div style={{ display: "flex", gap: 6, marginBottom: 24, flexWrap: "wrap" }}>
           {TABS.map(t => (
             <button key={t.key} onClick={() => setTab(t.key)}
@@ -149,7 +151,6 @@ export default function Profile() {
           ))}
         </div>
 
-        {/* Профиль */}
         {tab === "info" && (
           <div style={{ ...cardStyle, padding: 24 }}>
             {!editing ? (
@@ -217,7 +218,6 @@ export default function Profile() {
           </div>
         )}
 
-        {/* Мои квартиры */}
         {tab === "apartments" && (
           <div>
             <button className="btn" onClick={() => navigate("/apartments/create")}
@@ -270,7 +270,6 @@ export default function Profile() {
           </div>
         )}
 
-        {/* Запросы на аренду — таб для владельца */}
         {tab === "requests" && (
           <div>
             <p style={{ color: "var(--text2)", marginBottom: 16, fontSize: 14 }}>
@@ -288,20 +287,16 @@ export default function Profile() {
                   <div style={{ display: "flex", justifyContent: "space-between",
                     alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
                     <div>
-                      {/* Кто запрашивает */}
                       <p style={{ margin: 0, fontWeight: 700, fontSize: 16,
                         color: "var(--text)" }}>👤 {r.user}</p>
-                      {/* Какую квартиру */}
                       <p style={{ margin: "4px 0 0", color: "var(--text2)", fontSize: 14 }}>
                         🏠 {r.apartment}
                       </p>
-                      {/* Когда создан запрос */}
                       {r.created_at && (
                         <p style={{ margin: "4px 0 0", color: "var(--text3)", fontSize: 12 }}>
                           {new Date(r.created_at).toLocaleDateString("ru-RU")}
                         </p>
                       )}
-                      {/* Статус */}
                       <span style={{
                         display: "inline-block", marginTop: 8, fontSize: 13,
                         padding: "3px 12px", borderRadius: 20, fontWeight: 600,
@@ -310,8 +305,6 @@ export default function Profile() {
                         {s.label}
                       </span>
                     </div>
-
-                    {/* Кнопки только для pending */}
                     {r.status === "pending" && (
                       <div style={{ display: "flex", gap: 8 }}>
                         <button className="btn"
@@ -337,7 +330,6 @@ export default function Profile() {
           </div>
         )}
 
-        {/* Мои аренды — таб для жильца */}
         {tab === "bookings" && (
           <div>
             <p style={{ color: "var(--text2)", marginBottom: 16, fontSize: 14 }}>
@@ -366,7 +358,6 @@ export default function Profile() {
                   }}>
                     {s.label}
                   </span>
-                  {/* Если подтверждено — кнопка перейти к квартире и написать отзыв */}
                   {b.status === "rented" && (
                     <div style={{ marginTop: 12 }}>
                       <p style={{ fontSize: 13, color: "var(--green)", marginBottom: 8 }}>
@@ -380,7 +371,6 @@ export default function Profile() {
           </div>
         )}
 
-        {/* Чаты */}
         {tab === "chats" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {loading && <p className="loading-msg">Загрузка...</p>}
