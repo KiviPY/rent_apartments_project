@@ -3,12 +3,11 @@ from environ import Env
 from datetime import timedelta
 import os
 
-from core.settings.settings_dev import DEBUG
-
 env = Env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
+DEBUG = env.bool('DEBUG', default=False)
 if DEBUG:
     env.read_env(BASE_DIR / '.env')
 else:
