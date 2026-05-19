@@ -14,10 +14,10 @@ def validate_birth_date(value):
 
 class User(AbstractUser):
     GENDER_CHOICES = [
-        ('M', 'Male'),
-        ('F', 'Female'),
-        ('O', 'Other'),
-        ('NA', 'Prefer not to answer'),
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('other', 'Other'),
+        ('prefer_not', 'Prefer not to answer'),
     ]
     email = models.EmailField(unique=True)
     birth_date = models.DateField(validators=[validate_birth_date], blank=True, null=True)
