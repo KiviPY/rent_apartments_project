@@ -5,27 +5,41 @@ import Header from "../components/Header"
 
 const PROPERTY_TYPES = ["Apartment", "House", "Studio", "Room", "Villa"]
 
-const BOOL_FILTERS = [
-    {key: "has_heating", label: "Отопление"},
-    {key: "has_parking", label: "Парковка"},
-    {key: "has_balcony", label: "Балкон"},
-    {key: "has_terrace", label: "Терраса"},
-    {key: "permission_for_pets", label: "Можно с животными"},
-    {key: "permission_for_smoking", label: "Можно курить"},
-    {key: "is_good_for_couples", label: "Для пар"},
-    {key: "permission_for_musical_instruments", label: "Муз. инструменты"},
-    {key: "permission_for_small_kids", label: "Можно с детьми"},
-    {key: "is_furnished", label: "С мебелью"},
-]
+const BOOL_FILTERS = [{key: "has_heating", label: "Отопление"}, {
+    key: "has_parking",
+    label: "Парковка"
+}, {key: "has_balcony", label: "Балкон"}, {key: "has_terrace", label: "Терраса"}, {
+    key: "permission_for_pets",
+    label: "Можно с животными"
+}, {key: "permission_for_smoking", label: "Можно курить"}, {
+    key: "is_good_for_couples",
+    label: "Для пар"
+}, {key: "permission_for_musical_instruments", label: "Муз. инструменты"}, {
+    key: "permission_for_small_kids",
+    label: "Можно с детьми"
+}, {key: "is_furnished", label: "С мебелью"},]
 
 const EMPTY_FILTERS = {
-    city: "", min_price: "", max_price: "", property_type: "",
-    min_rent_duration: "", max_rent_duration: "", min_residents: "",
-    min_bedrooms: "", min_bathrooms: "", min_size_of_property: "",
-    min_average_rating: "", has_heating: false, has_parking: false,
-    has_balcony: false, has_terrace: false, permission_for_pets: false,
-    permission_for_smoking: false, is_good_for_couples: false,
-    permission_for_musical_instruments: false, permission_for_small_kids: false,
+    city: "",
+    min_price: "",
+    max_price: "",
+    property_type: "",
+    min_rent_duration: "",
+    max_rent_duration: "",
+    min_residents: "",
+    min_bedrooms: "",
+    min_bathrooms: "",
+    min_size_of_property: "",
+    min_average_rating: "",
+    has_heating: false,
+    has_parking: false,
+    has_balcony: false,
+    has_terrace: false,
+    permission_for_pets: false,
+    permission_for_smoking: false,
+    is_good_for_couples: false,
+    permission_for_musical_instruments: false,
+    permission_for_small_kids: false,
     is_furnished: false,
 }
 
@@ -74,16 +88,14 @@ export default function ApartmentList() {
         setApplied(EMPTY_FILTERS)
     }
 
-    return (
-        <div>
+    return (<div>
             <Header search={search} onSearch={setSearch}/>
 
             <div className="container">
 
                 {/* Панель управления */}
                 <div style={{
-                    display: "flex", alignItems: "center", gap: 12,
-                    marginBottom: 20, flexWrap: "wrap"
+                    display: "flex", alignItems: "center", gap: 12, marginBottom: 20, flexWrap: "wrap"
                 }}>
                     <button className="btn" onClick={() => setShowFilters(v => !v)}
                             style={{background: showFilters ? "var(--accent)" : "var(--accent-grad)"}}>
@@ -93,9 +105,15 @@ export default function ApartmentList() {
                     {/* Сортировка */}
                     <select value={ordering} onChange={e => setOrdering(e.target.value)}
                             style={{
-                                padding: "9px 14px", borderRadius: 10, fontSize: 14, fontWeight: 500,
-                                border: "1px solid var(--glass-border)", background: "var(--bg2)",
-                                color: "var(--text)", cursor: "pointer", outline: "none"
+                                padding: "9px 14px",
+                                borderRadius: 10,
+                                fontSize: 14,
+                                fontWeight: 500,
+                                border: "1px solid var(--glass-border)",
+                                background: "var(--bg2)",
+                                color: "var(--text)",
+                                cursor: "pointer",
+                                outline: "none"
                             }}>
                         <option value="">Сортировка</option>
                         <option value="price_per_month">Цена ↑</option>
@@ -107,13 +125,10 @@ export default function ApartmentList() {
                         <option value="-views_count">Популярные</option>
                     </select>
 
-                    {activeCount > 0 && (
-                        <span className="auth-link" onClick={resetFilters}>Сбросить всё</span>
-                    )}
+                    {activeCount > 0 && (<span className="auth-link" onClick={resetFilters}>Сбросить всё</span>)}
                 </div>
 
-                {showFilters && (
-                    <div className="filters-panel">
+                {showFilters && (<div className="filters-panel">
                         <div style={{
                             display: "grid",
                             gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
@@ -188,48 +203,49 @@ export default function ApartmentList() {
                             gap: 10,
                             marginBottom: 20
                         }}>
-                            {BOOL_FILTERS.map(({key, label}) => (
-                                <label key={key} style={{
-                                    display: "flex", alignItems: "center",
-                                    gap: 8, cursor: "pointer", fontSize: 14, color: "var(--text2)"
+                            {BOOL_FILTERS.map(({key, label}) => (<label key={key} style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 8,
+                                    cursor: "pointer",
+                                    fontSize: 14,
+                                    color: "var(--text2)"
                                 }}>
                                     <input type="checkbox" checked={filters[key]}
                                            onChange={e => setF(key, e.target.checked)}
                                            style={{width: 16, height: 16, accentColor: "var(--accent)"}}/>
                                     {label}
-                                </label>
-                            ))}
+                                </label>))}
                         </div>
 
                         <div style={{display: "flex", gap: 12}}>
                             <button className="btn" onClick={applyFilters}>Применить</button>
                             <button className="btn" onClick={resetFilters}
                                     style={{
-                                        background: "var(--glass)", color: "var(--text2)",
+                                        background: "var(--glass)",
+                                        color: "var(--text2)",
                                         border: "1px solid var(--glass-border)"
                                     }}>
                                 Сбросить
                             </button>
                         </div>
-                    </div>
-                )}
+                    </div>)}
 
                 {loading && <p className="loading-msg">Загрузка...</p>}
                 {error && <p className="error-msg">{error}</p>}
-                {!loading && !error && apartments.length === 0 && (
-                    <p className="empty-msg">Квартиры не найдены</p>
-                )}
+                {!loading && !error && apartments.length === 0 && (<p className="empty-msg">Квартиры не найдены</p>)}
 
                 <div className="cards-grid">
                     {apartments.map(ap => (
                         <div className="card" key={ap.id} onClick={() => navigate(`/apartments/${ap.id}`)}>
-                            {ap.images?.[0]
-                                ? <img className="image" src={ap.images[0].image} alt={ap.title}/>
-                                : <div className="image" style={{
-                                    display: "flex", alignItems: "center", justifyContent: "center",
-                                    color: "var(--text3)", fontSize: 40
-                                }}>🏠</div>
-                            }
+                            {ap.images?.[0] ? <img className="image" src={ap.images[0].image} alt={ap.title}/> :
+                                <div className="image" style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    color: "var(--text3)",
+                                    fontSize: 40
+                                }}>🏠</div>}
                             <div className="info">
                                 <h2 className="title">{ap.title}</h2>
                                 <p className="meta">📍 {ap.city}, {ap.country}</p>
@@ -238,18 +254,14 @@ export default function ApartmentList() {
                                     <span className="badge">{ap.property_type}</span>
                                     <span className="badge">от {ap.min_rent_duration} мес.</span>
                                 </div>
-                                {ap.average_rating > 0 && (
-                                    <p style={{color: "#f0a500", fontSize: 13, marginTop: 6}}>
+                                {ap.average_rating > 0 && (<p style={{color: "#f0a500", fontSize: 13, marginTop: 6}}>
                                         {"★".repeat(Math.round(ap.average_rating))} {ap.average_rating.toFixed(1)}
-                                    </p>
-                                )}
+                                    </p>)}
                             </div>
-                        </div>
-                    ))}
+                        </div>))}
                 </div>
             </div>
 
             <footer>© 2026 RentEasy. Все права защищены.</footer>
-        </div>
-    )
+        </div>)
 }

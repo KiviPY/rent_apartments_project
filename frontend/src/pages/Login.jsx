@@ -48,13 +48,11 @@ export default function Login() {
         }
     }
 
-    return (
-        <div>
+    return (<div>
             <Header/>
             <div className="auth-container">
 
-                {step === "login" && (
-                    <>
+                {step === "login" && (<>
                         <h1>Вход</h1>
                         <label className="auth-field">
                             <span>Email</span>
@@ -77,11 +75,9 @@ export default function Login() {
                 Зарегистрироваться
               </span>
                         </p>
-                    </>
-                )}
+                    </>)}
 
-                {step === "2fa" && (
-                    <>
+                {step === "2fa" && (<>
                         <h1>Подтверждение</h1>
                         <p style={{marginBottom: 16, color: "#555"}}>
                             Код отправлен на <strong>{email}</strong>
@@ -101,12 +97,10 @@ export default function Login() {
                         <p style={{marginTop: 12, textAlign: "center"}}>
                             <span className="auth-link" onClick={() => setStep("login")}>← Назад</span>
                         </p>
-                    </>
-                )}
+                    </>)}
 
                 {error && <p className="error-msg">{error}</p>}
             </div>
             <footer>© 2026 RentEasy. Все права защищены.</footer>
-        </div>
-    )
+        </div>)
 }
