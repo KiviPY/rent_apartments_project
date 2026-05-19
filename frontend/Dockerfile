@@ -9,5 +9,3 @@ COPY . .
 
 # Собираем статику для прода
 RUN npm run build
-
-EXPOSE 3000

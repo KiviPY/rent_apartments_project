@@ -1,24 +1,4 @@
-version: '3.9'
-
 services:
-
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_DATABASE: ${DATABASE_NAME}
-      MYSQL_USER: ${DATABASE_USER}
-      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
-    volumes:
-      - mysql_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    # На проде порт не открываем наружу — только внутри Docker сети
-    expose:
-      - "3306"
 
   redis:
     image: redis:7-alpine
@@ -32,20 +12,16 @@ services:
              python manage.py collectstatic --noinput &&
              daphne -b 0.0.0.0 -p 8000 core.asgi:application"
     volumes:
-      - media_data:/app/media
       - static_data:/app/staticfiles
       - ./logs:/app/logs
     expose:
       - "8000"
     environment:
-      DJANGO_SETTINGS_MODULE: core.settings.production
+      DJANGO_SETTINGS_MODULE: core.settings.settings_prod
     env_file:
       - .env.prod
     depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_started
+      - redis
 
   frontend:
     build:
@@ -61,14 +37,11 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       - frontend_build:/usr/share/nginx/html
-      - media_data:/app/media
       - static_data:/app/staticfiles
     depends_on:
       - backend
       - frontend
 
 volumes:
-  mysql_data:
-  media_data:
   static_data:
   frontend_build:
