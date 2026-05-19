@@ -4,6 +4,33 @@ import { api } from "../api"
 import { useAuth } from "../context/AuthContext"
 import Header from "../components/Header"
 
+const COUNTRIES = [
+  ["AF", "Afghanistan"], ["AL", "Albania"], ["DZ", "Algeria"],
+  ["AR", "Argentina"], ["AM", "Armenia"], ["AU", "Australia"],
+  ["AT", "Austria"], ["AZ", "Azerbaijan"], ["BY", "Belarus"],
+  ["BE", "Belgium"], ["BR", "Brazil"], ["BG", "Bulgaria"],
+  ["CA", "Canada"], ["CL", "Chile"], ["CN", "China"],
+  ["CO", "Colombia"], ["HR", "Croatia"], ["CY", "Cyprus"],
+  ["CZ", "Czech Republic"], ["DK", "Denmark"], ["EG", "Egypt"],
+  ["EE", "Estonia"], ["FI", "Finland"], ["FR", "France"],
+  ["GE", "Georgia"], ["DE", "Germany"], ["GR", "Greece"],
+  ["HU", "Hungary"], ["IN", "India"], ["ID", "Indonesia"],
+  ["IE", "Ireland"], ["IL", "Israel"], ["IT", "Italy"],
+  ["JP", "Japan"], ["KZ", "Kazakhstan"], ["KE", "Kenya"],
+  ["LV", "Latvia"], ["LB", "Lebanon"], ["LT", "Lithuania"],
+  ["LU", "Luxembourg"], ["MY", "Malaysia"], ["MT", "Malta"],
+  ["MX", "Mexico"], ["MD", "Moldova"], ["NL", "Netherlands"],
+  ["NZ", "New Zealand"], ["NG", "Nigeria"], ["NO", "Norway"],
+  ["PK", "Pakistan"], ["PL", "Poland"], ["PT", "Portugal"],
+  ["RO", "Romania"], ["RU", "Russia"], ["SA", "Saudi Arabia"],
+  ["RS", "Serbia"], ["SK", "Slovakia"], ["SI", "Slovenia"],
+  ["ZA", "South Africa"], ["KR", "South Korea"], ["ES", "Spain"],
+  ["SE", "Sweden"], ["CH", "Switzerland"], ["TW", "Taiwan"],
+  ["TH", "Thailand"], ["TN", "Tunisia"], ["TR", "Turkey"],
+  ["UA", "Ukraine"], ["AE", "United Arab Emirates"],
+  ["GB", "United Kingdom"], ["US", "United States"], ["UZ", "Uzbekistan"],
+]
+
 export default function Register() {
   const navigate = useNavigate()
   const { login } = useAuth()
@@ -94,7 +121,13 @@ export default function Register() {
             </label>
             <label className="auth-field">
               <span>Национальность</span>
-              <input type="text" value={form.nationality} onChange={set("nationality")} />
+              <select value={form.nationality} onChange={set("nationality")}
+                style={{ width:"100%", padding:"9px 12px", borderRadius:6, border:"1px solid #bbb", fontSize:15 }}>
+                <option value="">Не указана</option>
+                {COUNTRIES.map(([code, name]) => (
+                  <option key={code} value={code}>{name}</option>
+                ))}
+              </select>
             </label>
             <button className="btn" style={{width:"100%"}}
               onClick={handleRegister} disabled={loading}>

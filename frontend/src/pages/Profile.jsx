@@ -18,6 +18,33 @@ const STATUS_COLORS = {
   cancelled: { bg: "rgba(248,113,113,0.15)", color: "#f87171",  label: "✗ Отклонено" },
 }
 
+const COUNTRIES = [
+  ["AF", "Afghanistan"], ["AL", "Albania"], ["DZ", "Algeria"],
+  ["AR", "Argentina"], ["AM", "Armenia"], ["AU", "Australia"],
+  ["AT", "Austria"], ["AZ", "Azerbaijan"], ["BY", "Belarus"],
+  ["BE", "Belgium"], ["BR", "Brazil"], ["BG", "Bulgaria"],
+  ["CA", "Canada"], ["CL", "Chile"], ["CN", "China"],
+  ["CO", "Colombia"], ["HR", "Croatia"], ["CY", "Cyprus"],
+  ["CZ", "Czech Republic"], ["DK", "Denmark"], ["EG", "Egypt"],
+  ["EE", "Estonia"], ["FI", "Finland"], ["FR", "France"],
+  ["GE", "Georgia"], ["DE", "Germany"], ["GR", "Greece"],
+  ["HU", "Hungary"], ["IN", "India"], ["ID", "Indonesia"],
+  ["IE", "Ireland"], ["IL", "Israel"], ["IT", "Italy"],
+  ["JP", "Japan"], ["KZ", "Kazakhstan"], ["KE", "Kenya"],
+  ["LV", "Latvia"], ["LB", "Lebanon"], ["LT", "Lithuania"],
+  ["LU", "Luxembourg"], ["MY", "Malaysia"], ["MT", "Malta"],
+  ["MX", "Mexico"], ["MD", "Moldova"], ["NL", "Netherlands"],
+  ["NZ", "New Zealand"], ["NG", "Nigeria"], ["NO", "Norway"],
+  ["PK", "Pakistan"], ["PL", "Poland"], ["PT", "Portugal"],
+  ["RO", "Romania"], ["RU", "Russia"], ["SA", "Saudi Arabia"],
+  ["RS", "Serbia"], ["SK", "Slovakia"], ["SI", "Slovenia"],
+  ["ZA", "South Africa"], ["KR", "South Korea"], ["ES", "Spain"],
+  ["SE", "Sweden"], ["CH", "Switzerland"], ["TW", "Taiwan"],
+  ["TH", "Thailand"], ["TN", "Tunisia"], ["TR", "Turkey"],
+  ["UA", "Ukraine"], ["AE", "United Arab Emirates"],
+  ["GB", "United Kingdom"], ["US", "United States"], ["UZ", "Uzbekistan"],
+]
+
 export default function Profile() {
   const { account, setAccount, logout } = useAuth()
   const navigate = useNavigate()
@@ -34,7 +61,6 @@ export default function Profile() {
   const [saveError, setSaveError]   = useState(null)
   const [saveOk, setSaveOk]         = useState(false)
 
-  // Загружаем свежие данные пользователя при открытии профиля
   useEffect(() => {
     if (!account) return
     api.me()
@@ -111,6 +137,11 @@ export default function Profile() {
     border: "1px solid var(--glass-border)", marginBottom: 12
   }
 
+  const countryName = (code) => {
+    const found = COUNTRIES.find(([c]) => c === code)
+    return found ? found[1] : code
+  }
+
   return (
     <div>
       <Header />
@@ -161,7 +192,6 @@ export default function Profile() {
                   ["Телефон",          "phone_number"],
                   ["Дата рождения",    "birth_date"],
                   ["Пол",              "gender"],
-                  ["Национальность",   "nationality"],
                 ].map(([label, key]) => (
                   <div key={key} style={{
                     display: "flex", justifyContent: "space-between",
@@ -171,6 +201,15 @@ export default function Profile() {
                     <span style={{ fontWeight: 600, color: "var(--text)" }}>{account[key] || "—"}</span>
                   </div>
                 ))}
+                <div style={{
+                  display: "flex", justifyContent: "space-between",
+                  padding: "12px 0", borderBottom: "1px solid var(--glass-border)"
+                }}>
+                  <span style={{ color: "var(--text3)", fontSize: 14 }}>Национальность</span>
+                  <span style={{ fontWeight: 600, color: "var(--text)" }}>
+                    {account.nationality ? countryName(account.nationality) : "—"}
+                  </span>
+                </div>
                 <button className="btn" onClick={() => setEditing(true)} style={{ marginTop: 20 }}>
                   ✏️ Редактировать
                 </button>
@@ -178,11 +217,10 @@ export default function Profile() {
             ) : (
               <>
                 {[
-                  ["Имя пользователя", "username",     "text"],
-                  ["Email",            "email",         "email"],
-                  ["Телефон",          "phone_number",  "tel"],
-                  ["Дата рождения",    "birth_date",    "date"],
-                  ["Национальность",   "nationality",   "text"],
+                  ["Имя пользователя", "username",    "text"],
+                  ["Email",            "email",        "email"],
+                  ["Телефон",          "phone_number", "tel"],
+                  ["Дата рождения",    "birth_date",   "date"],
                 ].map(([label, key, type]) => (
                   <label key={key} className="auth-field">
                     <span>{label}</span>
@@ -199,6 +237,16 @@ export default function Profile() {
                     <option value="female">Женский</option>
                     <option value="other">Другой</option>
                     <option value="prefer_not">Не хочу указывать</option>
+                  </select>
+                </label>
+                <label className="auth-field">
+                  <span>Национальность</span>
+                  <select value={form.nationality ?? ""}
+                    onChange={e => setForm(f => ({ ...f, nationality: e.target.value }))}>
+                    <option value="">Не указана</option>
+                    {COUNTRIES.map(([code, name]) => (
+                      <option key={code} value={code}>{name}</option>
+                    ))}
                   </select>
                 </label>
                 {saveError && <p className="error-msg">{saveError}</p>}
@@ -344,7 +392,7 @@ export default function Profile() {
               return (
                 <div key={b.id} style={cardStyle}>
                   <p style={{ margin: 0, fontWeight: 700, fontSize: 16, color: "var(--text)" }}>
-                      🏠 {b.apartment_title ?? `Квартира #${b.apartment}`}
+                    🏠 {b.apartment_title ?? `Квартира #${b.apartment}`}
                   </p>
                   {b.created_at && (
                     <p style={{ margin: "4px 0 0", color: "var(--text3)", fontSize: 12 }}>
@@ -391,13 +439,13 @@ export default function Profile() {
                   {room.other_user?.username?.[0]?.toUpperCase() ?? "?"}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ margin: 0, fontWeight: 700, fontSize: 15,
-                    color: "var(--text)" }}>
+                  <p style={{ margin: 0, fontWeight: 700, fontSize: 15, color: "var(--text)" }}>
                     {room.other_user?.username ?? "Пользователь"}
                   </p>
                   {room.apartment_title && (
-                    <p style={{ margin: "2px 0 0", fontSize: 12,
-                      color: "var(--text3)" }}>{room.apartment_title}</p>
+                    <p style={{ margin: "2px 0 0", fontSize: 12, color: "var(--text3)" }}>
+                      {room.apartment_title}
+                    </p>
                   )}
                   {room.last_message && (
                     <p style={{ margin: "4px 0 0", fontSize: 14, color: "var(--text2)",
