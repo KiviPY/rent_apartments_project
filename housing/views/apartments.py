@@ -9,7 +9,7 @@ from housing.serializers import RegisterApartmentsSerializer
 
 
 class ApartmentListCreateAPI(generics.ListCreateAPIView):
-    queryset = RegisterApartments.objects.all()
+    queryset = RegisterApartments.objects.filter(status='active')
     serializer_class = RegisterApartmentsSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]  # любой может смотреть, только авторизованные могут создать
     filter_backends = [SearchFilter, DjangoFilterBackend, OrderingFilter]
