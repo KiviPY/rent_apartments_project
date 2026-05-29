@@ -509,5 +509,3 @@ EMAIL_HOST_PASSWORD=пароль-приложения
 ## 👨‍💻 Автор
 
 Разработано **KiviPY**
-
-GitHub: [github.com/KiviPY/rent_apartments_project](https://github.com/KiviPY/rent_apartments_project)
