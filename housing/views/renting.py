@@ -1,6 +1,8 @@
+from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, permissions
 from rest_framework.filters import SearchFilter
+from rest_framework.generics import get_object_or_404
 
 from housing.filters import BookingFilter
 from housing.permissions import IsOwner, IsApartmentOwner
@@ -22,16 +24,16 @@ class BookingAPICreate(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         """Берёт apartment_pk из URL (/apartments/1/book/ -> apartment_pk = 1)
-           Находит объект RegisterApartments с этим id
-           Сохраняет booking, привязывая его к апартаменту
-           user берётся автоматически через Hidden поле в сериализаторе"""
+                   Находит объект RegisterApartments с этим id
+                   Сохраняет booking, привязывая его к апартаменту
+                   user берётся автоматически через Hidden поле в сериализаторе"""
         apartment_id = self.kwargs.get('apartment_pk')
-        apartment = RegisterApartments.objects.get(id=apartment_id)
+        apartment = get_object_or_404(RegisterApartments, id=apartment_id)
+
         booking = serializer.save(apartment=apartment)
 
-        # отправка email
-        send_booking_email(booking)
-
+        # выполнится только если транзакция прошла успешно
+        transaction.on_commit(lambda: send_booking_email(booking))
 
 class BookingAPIRetrieveDestroy(generics. RetrieveDestroyAPIView):
     serializer_class = RentingApartmentsSerializer
